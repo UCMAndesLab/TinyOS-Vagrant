@@ -76,9 +76,9 @@ Vagrant.configure("2") do |config|
 
   ## Get Puppet Ready
   config.vm.provision :shell do |shell|
-    shell.inline = "apt-get install puppet;
-      mkdir -p /etc/puppet/modules;
-      puppet module install puppetlabs/apt
+    shell.inline = "apt-get -y install puppet &&
+      mkdir -p /etc/puppet/modules &&
+      puppet module install puppetlabs/apt &&
       puppet module install puppetlabs/vcsrepo"
   end
 
