@@ -20,7 +20,7 @@ class tinyosPre{
     package { $tinyosPre::ssh: ensure => 'installed', require => Exec['apt-update'] }
 
     # Get python for support scripts
-    $py = [ 'python3', 'python3-serial', 'python', 'python-serial' ]
+    $py = [ 'python3', 'python3-serial', 'python', 'python-serial' , 'python-dev' ]
     package { $tinyosPre::py: ensure => 'installed', require => Exec['apt-update'] }
 }
 
