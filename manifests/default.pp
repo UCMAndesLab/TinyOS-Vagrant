@@ -20,7 +20,7 @@ class tinyosPre{
     package { $tinyosPre::ssh: ensure => 'installed', require => Exec['apt-update'] }
 
     # Get python for support scripts
-    $py = [ 'python3', 'python3-serial', 'python', 'python-serial' , 'python-dev' ]
+    $py = [ 'python3', 'python3-serial', 'python', 'python-serial' , 'python-dev', 'gcc-4.8', 'g++-4.8' ]
     package { $tinyosPre::py: ensure => 'installed', require => Exec['apt-update'] }
 }
 
@@ -103,16 +103,17 @@ PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 MOTECOM="serial@/dev/ttyUSB0:telosb"
 
-TOSROOT=/opt/tinyos
-TOSDIR=$TOSROOT/tos
+TINYOS_ROOT_DIR=/opt/tinyos
+TOSDIR=$TINYOS_ROOT_DIR/tos
 
-MAKERULES=$TOSROOT/support/make/Makerules
-CLASSPATH=.:$TOSROOT/support/sdk/java/tinyos.jar
+MAKERULES=$TINYOS_ROOT_DIR/support/make/Makerules
+CLASSPATH=.:$TINYOS_ROOT_DIR/support/sdk/java/tinyos.jar
 
-PYTHONPATH=$TOSROOT/support/sdk/python:$PYTHONPATH
+PYTHONPATH=$TINYOS_ROOT_DIR/support/sdk/python:$PYTHONPATH
 
-export MAKERULES TOSDIR TOSROOT CLASSPATH PYTHONPATH
-export MOTECOM',
+export MAKERULES TINYOS_ROOT_DIR TOSDIR CLASSPATH PYTHONPATH
+export MOTECOM
+',
 
 	}
 
@@ -125,8 +126,6 @@ export MOTECOM',
         require => Vcsrepo['/opt/tinyos'],
     }
 }
-
-
 
 # Vagrant doesn't come with the necessary drivers to do serial communication/programming.
 # The following package adds it.
