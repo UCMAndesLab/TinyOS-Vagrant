@@ -89,7 +89,4 @@ Vagrant.configure("2") do |config|
     puppet.manifest_file = "default.pp"
   end
 
-  # Default 
-  config.ssh.username = "ubuntu"
-  config.ssh.password = "ff39b3df17753b0e2b77b99e"
 end
