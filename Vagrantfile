@@ -32,6 +32,7 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
 
+  config.vm.synced_folder "cse160-networks", "/home/ubuntu/cse160-networks"
   ## Set Name
   config.vm.hostname = "tinyOS"
   config.vm.provider "virtualbox" do |vb|
