@@ -7,11 +7,14 @@
 # you're doing.
 
 $script = <<SCRIPT
-apt-get -y install puppet
+wget https://apt.puppetlabs.com/puppetlabs-release-pc1-xenial.deb
+dpkg -i puppetlabs-release-pc1-xenial.deb
+apt update && apt-get -y upgrade
+apt-get install -y puppet puppet-module-puppetlabs-apt
 mkdir -p /etc/puppet/modules
-puppet module install puppetlabs/apt 
 puppet module install puppetlabs/vcsrepo
 SCRIPT
+# puppet module install puppetlabs/apt
 
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
@@ -30,6 +33,7 @@ Vagrant.configure("2") do |config|
   # SHELL
 
   ## Set Name
+  config.vm.hostname = "tinyOS"
   config.vm.provider "virtualbox" do |vb|
     vb.name = "TinyOS"
   end
