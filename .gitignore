@@ -1,2 +1,5 @@
 .vagrant
 *.log
+# Ignore the other 
+cse160-networks/
+
