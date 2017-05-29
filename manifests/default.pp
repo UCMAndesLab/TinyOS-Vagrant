@@ -1,10 +1,7 @@
-include apt
-
 # Update everything
 exec { 'apt-update':
-    command => '/usr/bin/apt-get update'
+    command => '/usr/bin/apt-get update',
 }
-
 #install tinyos
 class tinyosPre{
     # Get Build Tools
@@ -18,7 +15,7 @@ class tinyosPre{
     ]
     package { $tinyosPre::builders:
         ensure  => 'installed',
-        require => Exec['apt-update']
+        require => Exec['apt-update'],
     }
 
     # Get Git Tools
@@ -33,7 +30,7 @@ class tinyosPre{
     ]
     package { $tinyosPre::git:
         ensure  => 'installed',
-        require => Exec['apt-update']
+        require => Exec['apt-update'],
     }
 
     # Get SSH Client and Server (probably for serial forwarder scripts)
@@ -43,7 +40,7 @@ class tinyosPre{
     ]
     package { $tinyosPre::ssh:
         ensure  => 'installed',
-        require => Exec['apt-update']
+        require => Exec['apt-update'],
     }
 
     # Get python for support scripts
@@ -58,7 +55,7 @@ class tinyosPre{
     ]
     package { $tinyosPre::py:
         ensure  => 'installed',
-        require => Exec['apt-update']
+        require => Exec['apt-update'],
     }
 }
 
@@ -66,9 +63,10 @@ class tinyosPre{
 
 ## TinyProd
 # Get TinyProd key. Puppet will complain about the short id. Tinyprod doesn't provide a better key.
+include apt
 apt::key{'tinyprod':
-    id     => 'E071DBCA24B8A9B913B9',
-    server => 'keyserver.ubuntu.com'
+    id     => '481E5089F39D2A53F6BBE071DBCA24B8A9B913B9',
+    server => 'keyserver.ubuntu.com',
 }
 
 # Add Source
@@ -76,14 +74,14 @@ apt::source{'tinyprod':
     comment  => "TinyOS Dev tools and nesc",
     location => "http://tinyprod.net/repos/debian/",
     repos    => 'main',
-    release  => 'wheezy'
+    release  => 'wheezy',
 }
 
 apt::source{'tinyprod-msp430':
     comment  => "Msp430 toolchain",
     location => "http://tinyprod.net/repos/debian/",
     repos    => 'main',
-    release  => 'msp430-46'
+    release  => 'msp430-46',
 }
 
 # Build Tools for Tinyos
@@ -95,15 +93,19 @@ class tinyos-tools{
         'mspdebug'
     ]
     package { $tiny:
-        ensure => 'installed',
-        require => [
-            Exec['apt-update'],
-            Apt::Source['tinyprod'],
+        ensure          => 'installed',
+        # install_options => {'-o Dpkg::Options::="--force-overwrite"'},
+        install_options => [
+            '-o',
+            {'Dpkg::Options::' => '--force-overwrite'},
+        ],
+        require         => [
             Apt::Source['tinyprod-msp430'],
-            Apt::Key['tinyprod']
+            Apt::Source['tinyprod'],
+            Apt::Key['tinyprod'],
+            Exec['apt-update'],
         ]
     }
-
 }
 
 # Get main tinyos repo
@@ -112,17 +114,17 @@ class tinyos-main{
         ensure   => present,
         provider => git,
         source   => 'https://github.com/tinyos/tinyos-main.git',
-        require  => Class['tinyos-tools']
+        require  => Class['tinyos-tools'],
     }
 
 	# Copy profile into home directory
     # This is for makefiles
     file{'/home/ubuntu/.profile':
-        ensure => 'file'
+        ensure => 'file',
         mode   => '0644',
         owner  => 'ubuntu',
         group  => 'ubuntu',
-        source => 'file:///profile'
+        source => 'file:///vagrant/profile',
 	}
 
 
@@ -140,7 +142,6 @@ class tinyos-main{
 package {'linux-image-extra-virtual':
     require => Exec['apt-update'],
 }
-
 include tinyosPre
 include tinyos-tools
 include tinyos-main
